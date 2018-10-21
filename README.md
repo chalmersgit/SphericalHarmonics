@@ -30,6 +30,7 @@ References:
 - "Stupid Spherical Harmonics (SH) Tricks" by Peter Pike Sloan
 - PBRT source code: https://www.csie.ntu.edu.tw/~cyy/courses/rendering/pbrt-2.00/html/sh_8cpp_source.html
 - Probulator source code (I based my windowing code on this): https://github.com/kayru/Probulator
+- Some radiance maps can be downloaded here: http://gl.ict.usc.edu/Data/HighResProbes/
 
 Things TODO if people want it:
 - Support other formats (e.g. cubemap, angular map, etc.)
