@@ -24,7 +24,7 @@ python sphericalHarmonics.py radianceMap.exr 2
 See the main function to see examples of functions you can utilise in your own code.
 
 References:
-- Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps 2001.
+- Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps", 2001.
 - Sloan, Peter-Pike, Jan Kautz, and John Snyder. "Precomputed radiance transfer for real-time rendering in dynamic, low-frequency lighting environments", 2002.
 - "Spherical Harmonic Lighting: The Gritty Details" by Robin Green
 - "Stupid Spherical Harmonics (SH) Tricks" by Peter Pike Sloan
