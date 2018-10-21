@@ -32,7 +32,7 @@ References:
 - Probulator source code (I based my windowing code on this): https://github.com/kayru/Probulator
 - Some radiance maps can be downloaded here: http://gl.ict.usc.edu/Data/HighResProbes/
 
-Things TODO if people want it:
+Things TODO if people want it (and if I can be bothered):
 - Support other formats (e.g. cubemap, angular map, etc.)
 - Change, remove, or support other modules (e.g. I use imageio for reading HDR images, cv2 for resizing, etc.)
 - More optimisations
