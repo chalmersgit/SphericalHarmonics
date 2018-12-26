@@ -129,6 +129,7 @@ def getCoefficientsFromImage(ibl, lmax=2, resizeWidth=None, filterAmount=None):
 		ibl = resizeImage(ibl, 600, 300, cv2.INTER_CUBIC)
 	xres = ibl.shape[1]
 	yres = ibl.shape[0]
+	resizeWidth = xres
 
 	# Pre-filtering, windowing
 	if filterAmount is not None:
