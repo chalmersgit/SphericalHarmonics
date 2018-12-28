@@ -146,10 +146,10 @@ def getCoefficientsFromImage(ibl, lmax=2, resizeWidth=None, filterAmount=None):
 	if resizeWidth is not None:
 		#ibl = cv2.resize(ibl, dsize=(resizeWidth,int(resizeWidth/2)), interpolation=cv2.INTER_CUBIC)
 		ibl = resizeImage(ibl, resizeWidth, int(resizeWidth/2), cv2.INTER_CUBIC)
-	elif ibl.shape[1] > 600:
+	elif ibl.shape[1] > 1000:
 		#print("Input resolution is large, reducing for efficiency")
-		#ibl = cv2.resize(ibl, dsize=(600,300), interpolation=cv2.INTER_CUBIC)
-		ibl = resizeImage(ibl, 600, 300, cv2.INTER_CUBIC)
+		#ibl = cv2.resize(ibl, dsize=(1000,500), interpolation=cv2.INTER_CUBIC)
+		ibl = resizeImage(ibl, 1000, 500, cv2.INTER_CUBIC)
 	xres = ibl.shape[1]
 	yres = ibl.shape[0]
 	resizeWidth = xres
