@@ -152,7 +152,6 @@ def getCoefficientsFromImage(ibl, lmax=2, resizeWidth=None, filterAmount=None):
 		ibl = resizeImage(ibl, 1000, 500, cv2.INTER_CUBIC)
 	xres = ibl.shape[1]
 	yres = ibl.shape[0]
-	resizeWidth = xres
 
 	# Pre-filtering, windowing
 	if filterAmount is not None:
@@ -162,7 +161,7 @@ def getCoefficientsFromImage(ibl, lmax=2, resizeWidth=None, filterAmount=None):
 	sh_basis_matrix = getCoeeficientsMatrix(xres,lmax)
 
 	# Sampling weights
-	solidAngles = getSolidAngleMap(resizeWidth)
+	solidAngles = getSolidAngleMap(xres)
 
 	# Project IBL into SH basis
 	nCoeffs = shTerms(lmax)
