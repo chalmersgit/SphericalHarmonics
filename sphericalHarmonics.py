@@ -1,19 +1,42 @@
 '''
-By Andrew Chalmers, 2018
+MIT License
 
+Copyright (c) 2018 Andrew Chalmers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+'''
+
+'''
 Spherical harmonics for radiance maps using numpy
 
 Assumes:
 Equirectangular format
-theta	[0 to pi], from top to bottom row of pixels
-phi		[0 to 2*Pi], from left to right column of pixels
+theta: [0 to pi], from top to bottom row of pixels
+phi: [0 to 2*Pi], from left to right column of pixels
+
 '''
 
 import os, sys
 import numpy as np
 import imageio as im
-import cv2 					# resize images with float support
-from scipy import ndimage 	# gaussian blur
+import cv2 # resize images with float support
+from scipy import ndimage # gaussian blur
 import time
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
