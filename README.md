@@ -4,16 +4,16 @@ Spherical harmonics for radiance maps in Python (numpy).
 I wrote this code because I found it was difficult to obtain coefficients for a radiance map (especially in Python).
 
 Features:
-- Numpy vectorised for efficiency
 - Obtain coefficients for a radiance map (in equirectangular format)
+- Numpy vectorised for efficiency
 - Windowing function to reduce negative values
 - Obtain diffuse BRDF coefficients
 - Render a diffuse map (given radiance map coefficients)
 - Supports an arbitrary number of bands 
 - Plot the spherical harmonics in a figure
-- Render a ground truth radiance map to compare with. 
+- Render a ground truth diffuse map to compare with. 
 
-The ground truth can be a little slow to compute, so I've added the ability to render the diffuse values at a low resolution while sampling the high resolution source image. After rendering at a low resolution, I increase the resolution (so it's easier to see) using Lanczos interpolation. I found doing it this way was the most efficient while also producing high quality ground truth images.
+The ground truth diffuse map can be a little slow to compute, so I've added the ability to render the diffuse values at a low resolution while sampling the high resolution source image. After rendering at a low resolution, I increase the resolution (so it's easier to see) using Lanczos interpolation. I found doing it this way was the most efficient while also producing high quality ground truth images.
 
 # Usage
 python sphericalHarmonics.py [string filename.ext] [int nBands]
