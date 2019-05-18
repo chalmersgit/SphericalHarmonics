@@ -7,6 +7,7 @@ Features:
 - Obtain coefficients for a radiance map (in equirectangular format)
 - Numpy vectorised for efficiency
 - Windowing function to reduce negative values
+- Reconstruct radiance map from coefficients
 - Obtain diffuse BRDF coefficients
 - Render a diffuse map (given radiance map coefficients)
 - Supports an arbitrary number of bands 
