@@ -377,6 +377,13 @@ def shRender(iblCoeffs, width=600):
 		renderedImage[:,:,2] += sh_basis_matrix[:,:,idx] * coeff_rgb[2]
 	return renderedImage
 
+def getNormalMapAxesDuplicateRGB(normalMap):
+	# Make normal for each axis, but in 3D so we can multiply against RGB
+	N3Dx = np.repeat(normalMap[:,:,0][:, :, np.newaxis], 3, axis=2)
+	N3Dy = np.repeat(normalMap[:,:,1][:, :, np.newaxis], 3, axis=2)
+	N3Dz = np.repeat(normalMap[:,:,2][:, :, np.newaxis], 3, axis=2)
+	return N3Dx, N3Dy, N3Dz
+
 def shRenderL2(iblCoeffs, normalMap):
 	# From "An Efficient Representation for Irradiance Environment Maps" (2001), Ramamoorthi & Hanrahan
 	C1 = 0.429043
@@ -384,11 +391,8 @@ def shRenderL2(iblCoeffs, normalMap):
 	C3 = 0.743125
 	C4 = 0.886227
 	C5 = 0.247708
-	# Make normal for each axis, but in 3D so we can multiply against RGB
-	N3Dx = np.repeat(normalMap[:,:,0][:, :, np.newaxis], 3, axis=2)
-	N3Dy = np.repeat(normalMap[:,:,1][:, :, np.newaxis], 3, axis=2)
-	N3Dz = np.repeat(normalMap[:,:,2][:, :, np.newaxis], 3, axis=2)
-	return	(C4 * iblCoeffs[0,:] * np.ones(normalMap.shape) + \
+	N3Dx, N3Dy, N3Dz = getNormalMapAxesDuplicateRGB(normalMap)
+	return	(C4 * iblCoeffs[0,:] + \
 			2.0 * C2 * iblCoeffs[3,:] * N3Dx + \
 			2.0 * C2 * iblCoeffs[1,:] * N3Dy + \
 			2.0 * C2 * iblCoeffs[2,:] * N3Dz + \
