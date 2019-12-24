@@ -1,7 +1,7 @@
 # SphericalHarmonics
 Spherical harmonics for radiance maps in Python (numpy). 
 
-I wrote this code because I found it was difficult to obtain coefficients for a radiance map (especially in Python).
+I wrote this code because I found it was difficult to obtain coefficients for a radiance map from existing libraries (especially in Python).
 
 Features:
 - Obtain coefficients for a radiance map (in equirectangular format)
