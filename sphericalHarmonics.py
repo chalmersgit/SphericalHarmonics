@@ -124,7 +124,7 @@ def shEvaluate(theta, phi, lmax):
 			coeffsMatrix[:,:,index] = SH(l, m, theta, phi)
 	return coeffsMatrix
 
-def getCoeeficientsMatrix(xres,lmax=2):
+def getCoefficientsMatrix(xres,lmax=2):
 	yres = int(xres/2)
 	# setup fast vectorisation
 	x = np.arange(0,xres)
@@ -158,7 +158,7 @@ def getCoefficientsFromImage(ibl, lmax=2, resizeWidth=None, filterAmount=None):
 		ibl = blurIBL(ibl, amount=filterAmount)
 
 	# Compute sh coefficients
-	sh_basis_matrix = getCoeeficientsMatrix(xres,lmax)
+	sh_basis_matrix = getCoefficientsMatrix(xres,lmax)
 
 	# Sampling weights
 	solidAngles = getSolidAngleMap(xres)
@@ -361,13 +361,13 @@ def getDiffuseCoefficients(lmax):
 def shReconstructSignal(coeffs, sh_basis_matrix=None, width=600):
 	if sh_basis_matrix is None:
 		lmax = sh_lmax_from_terms(coeffs.shape[0])
-		sh_basis_matrix = getCoeeficientsMatrix(width,lmax)
+		sh_basis_matrix = getCoefficientsMatrix(width,lmax)
 	return np.dot(sh_basis_matrix,coeffs).astype(np.float32)
 
 def shRender(iblCoeffs, width=600):
 	lmax = sh_lmax_from_terms(iblCoeffs.shape[0])
 	diffuseCoeffs =getDiffuseCoefficients(lmax)
-	sh_basis_matrix = getCoeeficientsMatrix(width,lmax)
+	sh_basis_matrix = getCoefficientsMatrix(width,lmax)
 	renderedImage = np.zeros((int(width/2),width,3))
 	for idx in range(0,iblCoeffs.shape[0]):
 		l = l_from_idx(idx)
@@ -521,7 +521,7 @@ def sh_visualise(lmax=2, sh_basis_matrix=None, showIt=False, outputDir='./output
 					(1.0, 0.0, 0.0))}
 
 	if sh_basis_matrix is None:
-		sh_basis_matrix = getCoeeficientsMatrix(600,lmax)
+		sh_basis_matrix = getCoefficientsMatrix(600,lmax)
 
 	lmax = sh_lmax_from_terms(sh_basis_matrix.shape[2])
 
