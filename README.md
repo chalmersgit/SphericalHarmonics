@@ -6,7 +6,7 @@ I wrote this code because I found it was difficult to obtain coefficients for a 
 Features:
 - Obtain coefficients for a radiance map (in equirectangular format)
 - Numpy vectorised for efficiency
-- Windowing function to reduce negative values
+- Windowing function for reducing ringing artefacts
 - Reconstruct radiance map from coefficients
 - Obtain diffuse BRDF coefficients
 - Render a diffuse map (given radiance map coefficients)
