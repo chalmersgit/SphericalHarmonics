@@ -402,15 +402,18 @@ def shRenderL2(iblCoeffs, normalMap):
 			2.0 * C1 * iblCoeffs[7,:] * N3Dx * N3Dz + \
 			2.0 * C1 * iblCoeffs[5,:] * N3Dy * N3Dz ) / np.pi
 
+def getNormalMap(width):
+	height = int(width/2)
+	x = np.arange(0,width)
+	y = np.arange(0,height).reshape(height,1)
+	latLon = xy2ll(x,y,width,height)
+	return spherical2Cartesian2(latLon[0], latLon[1])
+
 def shReconstructDiffuseMap(iblCoeffs, width=600):
 	# Rendering 
 	if iblCoeffs.shape[0] == 9: # L2
 		# setup fast vectorisation
-		height = int(width/2)
-		x = np.arange(0,width)
-		y = np.arange(0,height).reshape(height,1)
-		latLon = xy2ll(x,y,width,height)
-		xyz = spherical2Cartesian2(latLon[0], latLon[1])
+		xyz = getNormalMap(width)
 		renderedImage = shRenderL2(iblCoeffs, xyz)
 	else: # !L2
 		renderedImage = shRender(iblCoeffs, width)
