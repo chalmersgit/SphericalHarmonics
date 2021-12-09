@@ -39,8 +39,8 @@ Things TODO if people want it (and if I can be bothered):
 - More optimisations
 - Other windowing methods
 - Other visualisations
-- Restructure the code so it's more organised (e.g. use classes, have it possible to install via pip, etc.)
-- Whatever else you can think of
+- Restructure code
+- etc.
 
 # Dependencies
 You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
