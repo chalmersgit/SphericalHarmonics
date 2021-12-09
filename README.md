@@ -47,6 +47,10 @@ You can use pip to install the modules I've used. The only gotcha is with imagei
 To add OpenEXR support to imageio, see here:
 https://imageio.readthedocs.io/en/stable/format_exr-fi.html#exr-fi
 
+Update:
+The website above appears to not work. Run the following in python (after installing imageio):
+imageio.plugins.freeimage.download()
+
 # License
 MIT License
 
