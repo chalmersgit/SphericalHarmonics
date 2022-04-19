@@ -45,10 +45,9 @@ Things TODO if people want it (and if I can be bothered):
 # Dependencies
 You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
 To add OpenEXR support to imageio, see here:
-https://imageio.readthedocs.io/en/stable/format_exr-fi.html#exr-fi
+https://imageio.readthedocs.io/en/stable/_autosummary/imageio.plugins.freeimage.html#module-imageio.plugins.freeimage
 
-Update:
-The website above appears to not work. Run the following in python (after installing imageio):
+e.g., run the following in python (after installing imageio):
 imageio.plugins.freeimage.download()
 
 # License
