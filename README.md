@@ -33,14 +33,14 @@ See the main function to see examples of functions you can utilise in your own c
 - Probulator source code (I based my windowing code on this): https://github.com/kayru/Probulator
 - Some radiance maps can be downloaded here: http://gl.ict.usc.edu/Data/HighResProbes/
 
-Things TODO if people want it (and if I can be bothered):
+Things TODO if people want it:
 - Support other formats (e.g. cubemap, angular map, etc.)
 - Change, remove, or support other modules (e.g. I use imageio for reading HDR images, cv2 for resizing, etc.)
 - More optimisations
 - Other windowing methods
 - Other visualisations
 - Restructure code
-- etc.
+- and more. Feel free to message me.
 
 # Dependencies
 You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
