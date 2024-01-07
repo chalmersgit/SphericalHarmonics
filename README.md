@@ -17,10 +17,10 @@ Features:
 The ground truth diffuse map can be a little slow to compute, so I've added the ability to render the diffuse values at a low resolution while sampling the high resolution source image. After rendering at a low resolution, I increase the resolution (so it's easier to see) using Lanczos interpolation. I found doing it this way was the most efficient while also producing high quality ground truth images.
 
 # Usage
-python sphericalHarmonics.py [string filename.ext] [int nBands]
+`python sphericalHarmonics.py [string filename.ext] [int nBands]`
 
 Example:
-python sphericalHarmonics.py radianceMap.exr 2
+`python sphericalHarmonics.py radianceMap.exr 2`
 
 See the main function to see examples of functions you can utilise in your own code.
 
