@@ -34,7 +34,7 @@ phi: [0 to 2*Pi], from left to right column of pixels
 
 import os, sys
 import numpy as np
-import imageio as im
+import imageio.v2 as im
 import cv2 # resize images with float support
 from scipy import ndimage # gaussian blur
 import time
@@ -321,7 +321,7 @@ def getDiffuseMap(ibl_name, width=600, widthLowRes=32, outputWidth=None):
 
 	solidAngles = getSolidAngleMap(width)
 
-	print("Convolving ", (widthLowRes,heightLowRes))
+	print("Convolving", (widthLowRes,heightLowRes))
 	outputDiffuseMap = np.zeros((heightLowRes,widthLowRes,3))
 	def compute(x_i, y_i):
 		x_i_s = int((float(x_i)/widthLowRes)*width)
@@ -437,6 +437,33 @@ def shPrint(coeffs, precision=3):
 		print(np.around(coeffs[idx,:],precision))
 	print('')
 
+def shPrintToFile(coeffs, precision=3, output_file_path="./output/_coefficients.txt"):
+	nCoeffs = coeffs.shape[0]
+	lmax = sh_lmax_from_terms(coeffs.shape[0])
+	currentBand = -1
+
+	with open(output_file_path, 'w') as file:		
+		for idx in range(0,nCoeffs):
+
+			# Print the band level
+			band = l_from_idx(idx)
+			if currentBand!=band:
+				currentBand = band
+				outputData_BandLevel = "L"+str(currentBand)+":"
+				print(outputData_BandLevel)
+				file.write(outputData_BandLevel+'\n')
+
+			# Print the coefficients at this band level
+			outputData_Coefficients = np.around(coeffs[idx,:],precision)
+			print(outputData_Coefficients)
+			file.write("[")
+			for i in range(0,len(outputData_Coefficients)):
+				file.write(str(outputData_Coefficients[i]))
+				if i<len(outputData_Coefficients)-1: # don't add white space after last coefficient
+					file.write(' ')
+			file.write(']\n')
+
+
 def shTermsWithinBand(l):
 	return (l*2)+1
 
@@ -487,7 +514,7 @@ def xy2ll(x,y,width,height):
 		return (yLoc / (float(height)/np.pi))
 	def xLocToLon(xLoc, width):
 		return (xLoc / (float(width)/(np.pi * 2)))
-	return np.asarray([yLocToLat(y, height), xLocToLon(x, width)])
+	return np.asarray([yLocToLat(y, height), xLocToLon(x, width)], dtype=object)
 
 def getCartesianMap(width):
 	height = int(width/2)
@@ -577,20 +604,26 @@ if __name__ == "__main__":
 	resizeHeight = int(resizeWidth/2)
 
 	# Visualise the SPH
+	print("Plotting spherical harmonic functions...")
 	sh_visualise(lmax, showIt=False, outputDir=outputDir)
 
 	# Read image
+	print("Reading in image...")
 	ibl_GT = resizeImage(im.imread(ibl_filename, 'EXR-FI')[:,:,0:3], resizeWidth, resizeHeight, cv2.INTER_CUBIC)
 	im.imwrite(outputDir+'_ibl_GT.exr', ibl_GT.astype(np.float32))
 
 	# SPH projection
+	print("Running spherical harmonics...")
 	iblCoeffs = getCoefficientsFromFile(ibl_filename, lmax, resizeWidth=resizeWidth)
 	#iblCoeffs = getCoefficientsFromImage(ibl_GT, lmax, resizeWidth=resizeWidth)
 	writeReconstruction(iblCoeffs, lmax, '_SPH', width=resizeWidth, outputDir=outputDir)
-	shPrint(iblCoeffs)
+	#shPrint(iblCoeffs)
+	shPrintToFile(iblCoeffs)
+	print("Spherical harmonics processing is complete.\n")
 
 	# Diffuse convolution diffuse map (ground truth)
-	diffuseLowResWidth = 32
+	print("Generating ground truth diffuse map for comparison...")
+	diffuseLowResWidth = 32 # changing resolution is a trade off between processing time and ground truth quality
 	outputWidth = resizeWidth
 	fn = outputDir+'_diffuse_ibl_GT_'+str(resizeWidth)+'_'+str(diffuseLowResWidth)+'_'+str(outputWidth)+'.exr'
 	diffuse_ibl_GT = getDiffuseMap(ibl_filename, width=resizeWidth, widthLowRes=diffuseLowResWidth, outputWidth=outputWidth) 
