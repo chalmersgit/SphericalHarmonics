@@ -19,7 +19,8 @@ The ground truth diffuse map can be a little slow to compute, so I've added the 
 # Usage
 `python sphericalHarmonics.py [string filename.ext] [int nBands]`
 
-Example:
+For example:
+
 `python sphericalHarmonics.py radianceMap.exr 2`
 
 See the main function to see examples of functions you can utilise in your own code.
