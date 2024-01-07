@@ -21,7 +21,7 @@ The ground truth diffuse map can be a little slow to compute, so I've added the 
 
 For example:
 
-`python sphericalHarmonics.py radianceMap.exr 2`
+`python sphericalHarmonics.py ./images/grace-new.exr 2`
 
 See the main function to see examples of functions you can utilise in your own code.
 
