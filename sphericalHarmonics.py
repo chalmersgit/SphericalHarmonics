@@ -34,6 +34,8 @@ phi: [0 to 2*Pi], from left to right column of pixels
 
 import os, sys
 import numpy as np
+import math
+import argparse
 import imageio.v2 as im
 import cv2 # resize images with float support
 from scipy import ndimage # gaussian blur
@@ -137,15 +139,15 @@ def getCoefficientsMatrix(xres,lmax=2):
 	Ylm = shEvaluate(latLon[0], latLon[1], lmax)
 	return Ylm
 
-def getCoefficientsFromFile(ibl_filename, lmax=2, resizeWidth=None, filterAmount=None):
+def getCoefficientsFromFile(ibl_filename, lmax=2, resize_width=None, filterAmount=None):
 	ibl = im.imread(os.path.join(os.path.dirname(__file__), ibl_filename))
-	return getCoefficientsFromImage(ibl, lmax=lmax, resizeWidth=resizeWidth, filterAmount=filterAmount)
+	return getCoefficientsFromImage(ibl, lmax=lmax, resize_width=resize_width, filterAmount=filterAmount)
 
-def getCoefficientsFromImage(ibl, lmax=2, resizeWidth=None, filterAmount=None):
+def getCoefficientsFromImage(ibl, lmax=2, resize_width=None, filterAmount=None):
 	# Resize if necessary (I recommend it for large images)
-	if resizeWidth is not None:
-		#ibl = cv2.resize(ibl, dsize=(resizeWidth,int(resizeWidth/2)), interpolation=cv2.INTER_CUBIC)
-		ibl = resizeImage(ibl, resizeWidth, int(resizeWidth/2), cv2.INTER_CUBIC)
+	if resize_width is not None:
+		#ibl = cv2.resize(ibl, dsize=(resize_width,int(resize_width/2)), interpolation=cv2.INTER_CUBIC)
+		ibl = resizeImage(ibl, resize_width, int(resize_width/2), cv2.INTER_CUBIC)
 	elif ibl.shape[1] > 1000:
 		#print("Input resolution is large, reducing for efficiency")
 		#ibl = cv2.resize(ibl, dsize=(1000,500), interpolation=cv2.INTER_CUBIC)
@@ -296,11 +298,11 @@ def getSolidAngleMap(width):
 	height = int(width/2)
 	return np.repeat(getSolidAngle(np.arange(0,height), width)[:, np.newaxis], width, axis=1)
 
-def getDiffuseMap(ibl_name, width=600, widthLowRes=32, outputWidth=None):
-	if outputWidth is None:
-		outputWidth = width
+def getDiffuseMap(ibl_name, width=600, width_low_res=32, output_width=None):
+	if output_width is None:
+		output_width = width
 	height = int(width/2)
-	heightLowRes = int(widthLowRes/2)
+	height_low_res = int(width_low_res/2)
 
 	img = im.imread(ibl_name, 'EXR-FI')[:,:,0:3]
 	img = resizeImage(img, width, height)
@@ -321,11 +323,11 @@ def getDiffuseMap(ibl_name, width=600, widthLowRes=32, outputWidth=None):
 
 	solidAngles = getSolidAngleMap(width)
 
-	print("Convolving", (widthLowRes,heightLowRes))
-	outputDiffuseMap = np.zeros((heightLowRes,widthLowRes,3))
+	print("Convolving", (width_low_res,height_low_res))
+	outputDiffuseMap = np.zeros((height_low_res,width_low_res,3))
 	def compute(x_i, y_i):
-		x_i_s = int((float(x_i)/widthLowRes)*width)
-		y_i_s = int((float(y_i)/heightLowRes)*height)
+		x_i_s = int((float(x_i)/width_low_res)*width)
+		y_i_s = int((float(y_i)/height_low_res)*height)
 		dot = np.maximum(0, d_x[y_i_s, x_i_s]*d_x + d_y[y_i_s, x_i_s]*d_y + d_z[y_i_s, x_i_s]*d_z)
 		for c_i in range(0,3):
 			outputDiffuseMap[y_i, x_i, c_i] = np.sum(dot * img[:,:,c_i] * solidAngles) / np.pi
@@ -338,8 +340,8 @@ def getDiffuseMap(ibl_name, width=600, widthLowRes=32, outputWidth=None):
 	end = time.time()
 	print("Elapsed time: %.4f seconds" % (end - start))
 
-	if widthLowRes < outputWidth:
-		outputDiffuseMap = resizeImage(outputDiffuseMap, outputWidth, int(outputWidth/2), cv2.INTER_LANCZOS4)
+	if width_low_res < output_width:
+		outputDiffuseMap = resizeImage(outputDiffuseMap, output_width, int(output_width/2), cv2.INTER_LANCZOS4)
 
 	return outputDiffuseMap.astype(np.float32)
 
@@ -352,7 +354,7 @@ def getDiffuseCoefficients(lmax):
 			a = (-1.)**((l/2.)-1.)
 			b = (l+2.)*(l-1.)
 			#c = float(np.math.factorial(l)) / (2**l * np.math.factorial(l/2)**2)
-			c = np.math.factorial(int(l)) / (2**l * np.math.factorial(int(l//2))**2)
+			c = math.factorial(int(l)) / (2**l * math.factorial(int(l//2))**2)
 			#s = ((2*l+1)/(4*np.pi))**0.5
 			diffuseCoeffs.append(2*np.pi*(a/b)*c)
 		else:
@@ -421,9 +423,9 @@ def shReconstructDiffuseMap(iblCoeffs, width=600):
 
 	return renderedImage.astype(np.float32)
 
-def writeReconstruction(c, lmax, fn='', width=600, outputDir='./output/'):
-	im.imwrite(outputDir+'_sh_light_l'+str(lmax)+fn+'.exr',shReconstructSignal(c, width=width))
-	im.imwrite(outputDir+'_sh_render_l'+str(lmax)+fn+'.exr',shReconstructDiffuseMap(c, width=width))
+def writeReconstruction(c, lmax, fn='', width=600, output_dir='./output/'):
+	im.imwrite(output_dir+'_sh_light_l'+str(lmax)+fn+'.exr',shReconstructSignal(c, width=width))
+	im.imwrite(output_dir+'_sh_render_l'+str(lmax)+fn+'.exr',shReconstructDiffuseMap(c, width=width))
 
 # Utility functions for SPH
 def shPrint(coeffs, precision=3):
@@ -541,7 +543,7 @@ def robin_green_example(width):
 						np.maximum(0.0, -4*np.sin(theta-np.pi) * np.cos(phi-2.5)-3) )
 
 # Visualisations
-def sh_visualise(lmax=2, sh_basis_matrix=None, showIt=False, outputDir='./output/'):
+def sh_visualise(lmax=2, sh_basis_matrix=None, showIt=False, output_dir='./output/'):
 	cdict =	{'red':	((0.0, 1.0, 1.0),
 					(0.5, 0.0, 0.0),
 					(1.0, 0.0, 0.0)),
@@ -563,7 +565,7 @@ def sh_visualise(lmax=2, sh_basis_matrix=None, showIt=False, outputDir='./output
 	if lmax==0:
 		plt.imshow(sh_basis_matrix[:,:,0], cmap=LinearSegmentedColormap('RedGreen', cdict), vmin=-1, vmax=1)
 		plt.axis("off")
-		plt.savefig(outputDir+'_fig_sh_l'+str(lmax)+'.jpg')
+		plt.savefig(output_dir+'_fig_sh_l'+str(lmax)+'.jpg')
 		if showIt:
 			plt.show()
 		return
@@ -584,44 +586,49 @@ def sh_visualise(lmax=2, sh_basis_matrix=None, showIt=False, outputDir='./output
 			imgIndex+=1
 
 	#plt.tight_layout()
-	plt.savefig(outputDir+'_fig_sh_l'+str(lmax)+'.jpg')
+	plt.savefig(output_dir+'_fig_sh_l'+str(lmax)+'.jpg')
 	if showIt:
 		plt.show()
 
 if __name__ == "__main__":
 	print("Spherical Harmonics for latitude-longitude radiance maps")
-	sys.argv = ['', './images/grace-new.exr', 3]
-	if len(sys.argv) < 3:
-		print("args: [string ibl_filename.exr] [int nBands]")
-		sys.exit()
 
-	outputDir = './output/'
-	if not os.path.exists(outputDir):
-		os.makedirs(outputDir)
+	# Parsing input
+	parser = argparse.ArgumentParser(description="Process IBL filename and number of bands.")
+	parser.add_argument('--ibl_filename', type=str, default='./images/grace-new.exr',
+	                    help="Path to the ibl filename (default: './images/grace-new.exr').")
+	parser.add_argument('--lmax', type=int, default=3,
+	                    help="Number of bands (must be an integer, default: 3).")
+	parser.add_argument('--output_dir', type=str, default='./output/', 
+	                    help="Output directory (default: './output/').")
+	parser.add_argument('--resize_width', type=int, default=1000, 
+	                    help="Width to resize the image (default: 1000).")
+	args = parser.parse_args()
 
-	ibl_filename = sys.argv[1]
-	lmax = int(sys.argv[2])
+	print(f"Input File (IBL): {args.ibl_filename}")
+	print(f"Number of Bands (lmax): {args.lmax}")
+	print(f"Resize Width: {args.resize_width}")
+	print(f"Output Directory: {args.output_dir}")
+	print("\n")
 
-	resizeWidth = 1000
-	resizeHeight = int(resizeWidth/2)
-
-	print(ibl_filename)
-	print(lmax)
+	if not os.path.exists(args.output_dir):
+		os.makedirs(args.output_dir)
+	resize_height = int(args.resize_width/2)
 
 	# Visualise the SPH
 	print("Plotting spherical harmonic functions...")
-	sh_visualise(lmax, showIt=False, outputDir=outputDir)
+	sh_visualise(args.lmax, showIt=False, output_dir=args.output_dir)
 
 	# Read image
 	print("Reading in image...")
-	ibl_GT = resizeImage(im.imread(ibl_filename, 'EXR-FI')[:,:,0:3], resizeWidth, resizeHeight, cv2.INTER_CUBIC)
-	im.imwrite(outputDir+'_ibl_GT.exr', ibl_GT.astype(np.float32))
+	ibl_GT = resizeImage(im.imread(args.ibl_filename, 'EXR-FI')[:,:,0:3], args.resize_width, resize_height, cv2.INTER_CUBIC)
+	im.imwrite(args.output_dir+'_ibl_GT.exr', ibl_GT.astype(np.float32))
 
 	# SPH projection
 	print("Running spherical harmonics...")
-	iblCoeffs = getCoefficientsFromFile(ibl_filename, lmax, resizeWidth=resizeWidth)
-	#iblCoeffs = getCoefficientsFromImage(ibl_GT, lmax, resizeWidth=resizeWidth)
-	writeReconstruction(iblCoeffs, lmax, '_SPH', width=resizeWidth, outputDir=outputDir)
+	iblCoeffs = getCoefficientsFromFile(args.ibl_filename, args.lmax, resize_width=args.resize_width)
+	#iblCoeffs = getCoefficientsFromImage(ibl_GT, args.lmax, resize_width=args.resize_width)
+	writeReconstruction(iblCoeffs, args.lmax, '_SPH', width=args.resize_width, output_dir=args.output_dir)
 	#shPrint(iblCoeffs)
 	shPrintToFile(iblCoeffs)
 	print("Spherical harmonics processing is complete.\n")
@@ -629,9 +636,9 @@ if __name__ == "__main__":
 	# Diffuse convolution diffuse map (ground truth)
 	print("Generating ground truth diffuse map for comparison...")
 	diffuseLowResWidth = 32 # changing resolution is a trade off between processing time and ground truth quality
-	outputWidth = resizeWidth
-	fn = outputDir+'_diffuse_ibl_GT_'+str(resizeWidth)+'_'+str(diffuseLowResWidth)+'_'+str(outputWidth)+'.exr'
-	diffuse_ibl_GT = getDiffuseMap(ibl_filename, width=resizeWidth, widthLowRes=diffuseLowResWidth, outputWidth=outputWidth) 
+	output_width = args.resize_width
+	fn = args.output_dir+'_diffuse_ibl_GT_'+str(args.resize_width)+'_'+str(diffuseLowResWidth)+'_'+str(output_width)+'.exr'
+	diffuse_ibl_GT = getDiffuseMap(args.ibl_filename, width=args.resize_width, width_low_res=diffuseLowResWidth, output_width=output_width) 
 	im.imwrite(fn, diffuse_ibl_GT.astype(np.float32))
 
 	print("Complete")
