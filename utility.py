@@ -23,12 +23,7 @@ SOFTWARE.
 '''
 
 '''
-Spherical harmonics for radiance maps using numpy
-
-Assumes:
-Equirectangular format
-theta: [0 to pi], from top to bottom row of pixels
-phi: [0 to 2*Pi], from left to right column of pixels
+Utility functions
 '''
 
 import os
