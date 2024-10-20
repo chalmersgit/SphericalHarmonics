@@ -1,0 +1,7 @@
+imageio==2.36.0
+matplotlib==3.9.2
+numpy==2.1.2
+opencv_contrib_python==4.10.0.84
+opencv_python==4.10.0.82
+scipy==1.14.1
+skimage==0.0
