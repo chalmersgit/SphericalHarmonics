@@ -351,7 +351,8 @@ def getDiffuseCoefficients(lmax):
 		if l%2==0:
 			a = (-1.)**((l/2.)-1.)
 			b = (l+2.)*(l-1.)
-			c = float(np.math.factorial(l)) / (2**l * np.math.factorial(l/2)**2)
+			#c = float(np.math.factorial(l)) / (2**l * np.math.factorial(l/2)**2)
+			c = np.math.factorial(int(l)) / (2**l * np.math.factorial(int(l//2))**2)
 			#s = ((2*l+1)/(4*np.pi))**0.5
 			diffuseCoeffs.append(2*np.pi*(a/b)*c)
 		else:
@@ -589,6 +590,7 @@ def sh_visualise(lmax=2, sh_basis_matrix=None, showIt=False, outputDir='./output
 
 if __name__ == "__main__":
 	print("Spherical Harmonics for latitude-longitude radiance maps")
+	sys.argv = ['', './images/grace-new.exr', 3]
 	if len(sys.argv) < 3:
 		print("args: [string ibl_filename.exr] [int nBands]")
 		sys.exit()
@@ -602,6 +604,9 @@ if __name__ == "__main__":
 
 	resizeWidth = 1000
 	resizeHeight = int(resizeWidth/2)
+
+	print(ibl_filename)
+	print(lmax)
 
 	# Visualise the SPH
 	print("Plotting spherical harmonic functions...")
