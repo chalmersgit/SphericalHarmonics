@@ -1,8 +1,6 @@
 # SphericalHarmonics
 Spherical harmonics for radiance maps in Python (numpy). 
 
-I wrote this code because I found it was difficult to obtain coefficients for a radiance map from existing libraries (especially in Python).
-
 Features:
 - Obtain coefficients for a radiance map (in equirectangular format)
 - Numpy vectorised for efficiency
@@ -17,11 +15,12 @@ Features:
 The ground truth diffuse map can be a little slow to compute, so I've added the ability to render the diffuse values at a low resolution while sampling the high resolution source image. After rendering at a low resolution, I increase the resolution (so it's easier to see) using Lanczos interpolation. I found doing it this way was the most efficient while also producing high quality ground truth images.
 
 # Usage
-`python sphericalHarmonics.py [string filename.ext] [int nBands]`
+
+`python main.py --ibl_filename <path_to_ibl_file> --l_max <number_of_bands> --output_dir <output_directory> --resize_width <width>`
 
 For example:
 
-`python sphericalHarmonics.py ./images/grace-new.exr 2`
+`python main.py --ibl_filename ./images/grace-new.exr --l_max 2`
 
 See the main function to see examples of functions you can utilise in your own code.
 
