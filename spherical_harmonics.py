@@ -112,12 +112,12 @@ def sh_index(l, m):
 
 def sh_evaluate(theta, phi, l_max):
 	if np.isscalar(theta):
-		coeffsMatrix = np.zeros((1,1,sh_terms(l_max)))
+		coeffs_matrix = np.zeros((1,1,sh_terms(l_max)))
 	else:
-		coeffsMatrix = np.zeros((theta.shape[0],phi.shape[0],sh_terms(l_max)))
+		coeffs_matrix = np.zeros((theta.shape[0],phi.shape[0],sh_terms(l_max)))
 
 	for l in range(0,l_max+1):
 		for m in range(-l,l+1):
 			index = sh_index(l, m)
-			coeffsMatrix[:,:,index] = sh(l, m, theta, phi)
-	return coeffsMatrix
+			coeffs_matrix[:,:,index] = sh(l, m, theta, phi)
+	return coeffs_matrix
