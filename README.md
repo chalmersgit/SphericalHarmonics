@@ -1,4 +1,4 @@
-# SphericalHarmonics
+# Spherical Harmonics
 Spherical harmonics for radiance maps in Python (numpy). 
 
 Features:
@@ -14,7 +14,7 @@ Features:
 
 The ground truth diffuse map can be a little slow to compute, so I've added the ability to render the diffuse values at a low resolution while sampling the high resolution source image. After rendering at a low resolution, I increase the resolution (so it's easier to see) using Lanczos interpolation. I found doing it this way was the most efficient while also producing high quality ground truth images.
 
-# Usage
+## Usage
 
 `python main.py --ibl_filename <path_to_ibl_file> --l_max <number_of_bands> --output_dir <output_directory> --resize_width <width>`
 
@@ -24,7 +24,7 @@ For example:
 
 See the main function to see examples of functions you can utilise in your own code.
 
-# Dependencies
+## Dependencies
 
 You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
 To add OpenEXR support to imageio, see here:
@@ -33,7 +33,7 @@ https://imageio.readthedocs.io/en/stable/_autosummary/imageio.plugins.freeimage.
 e.g., run the following in python (after installing imageio):
 imageio.plugins.freeimage.download()
 
-# References
+## References
 
 - Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps", 2001.
 - Sloan, Peter-Pike, Jan Kautz, and John Snyder. "Precomputed radiance transfer for real-time rendering in dynamic, low-frequency lighting environments", 2002.
@@ -43,7 +43,7 @@ imageio.plugins.freeimage.download()
 - Probulator source code (I based my windowing code on this): https://github.com/kayru/Probulator
 - Some radiance maps can be downloaded here: http://gl.ict.usc.edu/Data/HighResProbes/
 
-# Future Development
+## Future Development
 
 Depending on demand, the following may be addedd in future:
 - Support other formats (e.g. cubemap, angular map, etc.)
@@ -53,7 +53,7 @@ Depending on demand, the following may be addedd in future:
 - Other visualisations
 - Restructure code
 
-# License
+## License
 
 MIT License
 
