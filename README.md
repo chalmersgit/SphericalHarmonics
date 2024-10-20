@@ -24,7 +24,17 @@ For example:
 
 See the main function to see examples of functions you can utilise in your own code.
 
+# Dependencies
+
+You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
+To add OpenEXR support to imageio, see here:
+https://imageio.readthedocs.io/en/stable/_autosummary/imageio.plugins.freeimage.html#module-imageio.plugins.freeimage
+
+e.g., run the following in python (after installing imageio):
+imageio.plugins.freeimage.download()
+
 # References
+
 - Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps", 2001.
 - Sloan, Peter-Pike, Jan Kautz, and John Snyder. "Precomputed radiance transfer for real-time rendering in dynamic, low-frequency lighting environments", 2002.
 - "Spherical Harmonic Lighting: The Gritty Details" by Robin Green
@@ -33,24 +43,18 @@ See the main function to see examples of functions you can utilise in your own c
 - Probulator source code (I based my windowing code on this): https://github.com/kayru/Probulator
 - Some radiance maps can be downloaded here: http://gl.ict.usc.edu/Data/HighResProbes/
 
-Things TODO if people want it:
+# Future Development
+
+Depending on demand, the following may be addedd in future:
 - Support other formats (e.g. cubemap, angular map, etc.)
 - Change, remove, or support other modules (e.g. I use imageio for reading HDR images, cv2 for resizing, etc.)
 - More optimisations
 - Other windowing methods
 - Other visualisations
 - Restructure code
-- and more. Feel free to message me.
-
-# Dependencies
-You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
-To add OpenEXR support to imageio, see here:
-https://imageio.readthedocs.io/en/stable/_autosummary/imageio.plugins.freeimage.html#module-imageio.plugins.freeimage
-
-e.g., run the following in python (after installing imageio):
-imageio.plugins.freeimage.download()
 
 # License
+
 MIT License
 
 Copyright (c) 2018 Andrew Chalmers
