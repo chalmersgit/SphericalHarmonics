@@ -207,11 +207,11 @@ def sh_evaluate(theta, phi, l_max):
     Returns:
         ndarray: Spherical harmonics coefficients matrix.
     """
-    coeffsMatrix = np.zeros((theta.shape[0], phi.shape[0], sh_terms(l_max)))
+    coeffs_matrix = np.zeros((theta.shape[0], phi.shape[0], sh_terms(l_max)))
 
     for l in range(0, l_max + 1):
         for m in range(-l, l + 1):
             index = sh_index(l, m)
-            coeffsMatrix[:, :, index] = sh(l, m, theta, phi)
+            coeffs_matrix[:, :, index] = sh(l, m, theta, phi)
 
-    return coeffsMatrix
+    return coeffs_matrix
