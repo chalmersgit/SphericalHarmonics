@@ -34,12 +34,6 @@ phi: [0 to 2*Pi], from left to right column of pixels
 import numpy as np
 
 # Spherical harmonics functions
-
-
-import numpy as np
-
-# Spherical Harmonics functions
-
 def P(l, m, x):
     """
     Computes the associated Legendre polynomial P(l, m, x).
