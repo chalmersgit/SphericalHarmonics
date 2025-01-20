@@ -26,12 +26,17 @@ See the main function to see examples of functions you can utilise in your own c
 
 ## Dependencies
 
-You can use pip to install the modules I've used. The only gotcha is with imageio. By default it does not provide OpenEXR support.
+You can use pip to install the modules I've used, or use the requirements file: 
+
+`pip install -r requirements.txt`
+
+The only gotcha is with imageio. By default it does not provide OpenEXR support.
 To add OpenEXR support to imageio, see here:
 https://imageio.readthedocs.io/en/stable/_autosummary/imageio.plugins.freeimage.html#module-imageio.plugins.freeimage
 
 e.g., run the following in python (after installing imageio):
-imageio.plugins.freeimage.download()
+
+`imageio.plugins.freeimage.download()`
 
 ## References
 
