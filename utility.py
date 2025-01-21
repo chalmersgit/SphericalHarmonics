@@ -106,7 +106,7 @@ def get_solid_angle_map(width):
 	height = int(width/2)
 	return np.repeat(get_solid_angle(np.arange(0,height), width)[:, np.newaxis], width, axis=1)
 
-def get_diffuse_map(ibl_name, width=600, width_low_res=32, output_width=None):
+def get_roughness_map(ibl_name, width=600, width_low_res=32, output_width=None, roughness=1.0):
 	if output_width is None:
 		output_width = width
 	height = int(width/2)
@@ -131,24 +131,88 @@ def get_diffuse_map(ibl_name, width=600, width_low_res=32, output_width=None):
 
 	solid_angles = get_solid_angle_map(width)
 
+	####
+	specular_power = getSpecularPower(roughness)
+
 	print("Convolving", (width_low_res,height_low_res))
-	output_diffuse_map = np.zeros((height_low_res,width_low_res,3))
+	output_roughness_map = np.zeros((height_low_res,width_low_res,3))
 	def compute(x_i, y_i):
 		x_i_s = int((float(x_i)/width_low_res)*width)
 		y_i_s = int((float(y_i)/height_low_res)*height)
 		dot = np.maximum(0, d_x[y_i_s, x_i_s]*d_x + d_y[y_i_s, x_i_s]*d_y + d_z[y_i_s, x_i_s]*d_z)
+		weight = pow(dot, specular_power)*solid_angles
+		energy_sum = np.sum(weight)
 		for c_i in range(0,3):
-			output_diffuse_map[y_i, x_i, c_i] = np.sum(dot * img[:,:,c_i] * solid_angles) / np.pi
+			output_roughness_map[y_i, x_i, c_i] = np.sum(weight * img[:,:,c_i]) / energy_sum #/ np.pi
 
 	start = time.time()
-	for x_i in range(0,output_diffuse_map.shape[1]):
-		#print(float(x_i)/output_diffuse_map.shape[1])
-		for y_i in range(0,output_diffuse_map.shape[0]):
+	for x_i in range(0,output_roughness_map.shape[1]):
+		#print(float(x_i)/output_roughness_map.shape[1])
+		for y_i in range(0,output_roughness_map.shape[0]):
 			compute(x_i, y_i)
 	end = time.time()
 	print("Elapsed time: %.4f seconds" % (end - start))
 
 	if width_low_res < output_width:
-		output_diffuse_map = resize_image(output_diffuse_map, output_width, int(output_width/2), cv2.INTER_LANCZOS4)
+		output_roughness_map = resize_image(output_roughness_map, output_width, int(output_width/2), cv2.INTER_LANCZOS4)
 
-	return output_diffuse_map.astype(np.float32)
+	return output_roughness_map.astype(np.float32)
+
+def getSpecularPower(roughness):
+	"""
+	Bound roughness betwee [0,1]
+	http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
+	But found it was buggy, especially when the powValue goes below 1.0
+	"""
+	alpha = pow(roughness,2.0);
+	alpha2 = pow(alpha,2.0);
+	#powValue = (2.0/alpha2) - 2.0;
+	#normalisation = 1.0/(PI*alpha2);
+	# My version
+	return (2.0/alpha2) - 1.0;
+	
+def linear2sRGB(hdr_img, gamma=2.2, autoExposure = 1.0):
+	# Autoexposure
+	hdr_img = hdr_img*autoExposure
+
+	# Brackets
+	lower = hdr_img <= 0.0031308
+	upper = hdr_img > 0.0031308
+
+	# Gamma correction
+	hdr_img[lower] *= 12.92
+	hdr_img[upper] = 1.055 * np.power(hdr_img[upper], 1.0/gamma) - 0.055
+
+	# HDR to LDR format
+	img_8bit = np.clip(hdr_img*255, 0, 255).astype('uint8')
+	return img_8bit
+
+
+if __name__ == "__main__":
+	print("Generating roughness maps...")
+	output_dir = './output/'
+	ibl_filename = './images/grace-new.exr'
+
+	# Trade-off between processing time and ground truth quality
+	# Note 1: High resize_width maintains high intensity values in source, while roughness_low_res_width reduces the convolution size
+	# Note 2: Mismatch between resolutions can cause missing holes (black pixels) in images with low roughness
+	resize_width = 512
+	roughness_low_res_width = 32
+
+	for roughness in [0.1, 0.25, 0.5, 0.75, 1.0]:
+		output_width = resize_width
+		fn = os.path.join(output_dir, f'_roughness_ibl_gt_{resize_width}_{roughness_low_res_width}_{output_width}.exr')
+		roughness_ibl_gt = get_roughness_map(
+			ibl_filename,
+			width=resize_width,
+			width_low_res=roughness_low_res_width,
+			output_width=output_width,
+			roughness=roughness
+		)
+		#im.imwrite(fn, roughness_ibl_gt.astype(np.float32))
+
+		fn2 = os.path.join(output_dir, f'_roughness_{roughness}_ldr.jpg')
+		im.imwrite(fn2, linear2sRGB(roughness_ibl_gt))
+
+	print("Complete.")
+

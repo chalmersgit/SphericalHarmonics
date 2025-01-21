@@ -224,8 +224,14 @@ def sh_reconstruct_diffuse_map(ibl_coeffs, width=600):
 	return rendered_image.astype(np.float32)
 
 def write_reconstruction(c, l_max, fn='', width=600, output_dir='./output/'):
-	im.imwrite(output_dir+'_sh_light_l'+str(l_max)+fn+'.exr',sh_reconstruct_signal(c, width=width))
-	im.imwrite(output_dir+'_sh_render_l'+str(l_max)+fn+'.exr',sh_reconstruct_diffuse_map(c, width=width))
+	reconstructed_signal = sh_reconstruct_signal(c, width=width)
+	reconstructed_diffuse = sh_reconstruct_diffuse_map(c, width=width)
+
+	im.imwrite(output_dir+'_sh_light_l'+str(l_max)+fn+'.exr',reconstructed_signal)
+	im.imwrite(output_dir+'_sh_render_l'+str(l_max)+fn+'.exr',reconstructed_diffuse)
+
+	im.imwrite(output_dir+'_sh_light_l'+str(l_max)+fn+'.jpg',utility.linear2sRGB(reconstructed_signal))
+	im.imwrite(output_dir+'_sh_render_l'+str(l_max)+fn+'.png',utility.linear2sRGB(reconstructed_diffuse))
 
 # Utility functions for SPH
 def sh_print(coeffs, precision=3):

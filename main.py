@@ -149,6 +149,7 @@ def main():
 	)
 
 	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.exr'), radiance_map_data.astype(np.float32))
+	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.jpg'), utility.linear2sRGB(radiance_map_data))
 
 	# SPH projection
 	print("Running spherical harmonics...")
@@ -164,14 +165,14 @@ def main():
 	print("Generating ground truth diffuse map for comparison...")
 	diffuse_low_res_width = 32  # Trade-off between processing time and ground truth quality
 	output_width = args.resize_width
-	fn = os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.exr')
-	diffuse_ibl_gt = utility.get_diffuse_map(
+	diffuse_ibl_gt = utility.get_roughness_map(
 		args.ibl_filename,
 		width=args.resize_width,
 		width_low_res=diffuse_low_res_width,
 		output_width=output_width
 	)
-	im.imwrite(fn, diffuse_ibl_gt.astype(np.float32))
+	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.exr'), diffuse_ibl_gt.astype(np.float32))
+	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.jpg'), utility.linear2sRGB(diffuse_ibl_gt))
 
 	print("Complete.")
 
