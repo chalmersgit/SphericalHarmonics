@@ -201,7 +201,6 @@ if __name__ == "__main__":
 
 	for roughness in [0.1, 0.25, 0.5, 0.75, 1.0]:
 		output_width = resize_width
-		fn = os.path.join(output_dir, f'_roughness_ibl_gt_{resize_width}_{roughness_low_res_width}_{output_width}.exr')
 		roughness_ibl_gt = get_roughness_map(
 			ibl_filename,
 			width=resize_width,
@@ -209,10 +208,8 @@ if __name__ == "__main__":
 			output_width=output_width,
 			roughness=roughness
 		)
-		#im.imwrite(fn, roughness_ibl_gt.astype(np.float32))
-
-		fn2 = os.path.join(output_dir, f'_roughness_{roughness}_ldr.jpg')
-		im.imwrite(fn2, linear2sRGB(roughness_ibl_gt))
+		im.imwrite(os.path.join(output_dir, f'_roughness_hdr_{roughness}.exr'), roughness_ibl_gt.astype(np.float32))
+		im.imwrite(os.path.join(output_dir, f'_roughness_ldr_{roughness}.jpg'), linear2sRGB(roughness_ibl_gt))
 
 	print("Complete.")
 
