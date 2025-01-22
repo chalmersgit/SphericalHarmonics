@@ -35,7 +35,7 @@ import cv2 # resize images with float support
 import math
 
 # Custom
-import spherical_harmonics as  sh
+import spherical_harmonics as sh
 import utility
 
 def get_coefficients_matrix(xres,l_max=2):

@@ -38,11 +38,9 @@ import argparse
 import imageio.v3 as im
 import cv2  # For resizing images with float support
 
-# Custom imports
-import spherical_harmonics as sh
-import sh_utility
-import utility
-
+# Custom
+import sh_utilities
+import utilities
 
 def google_example_data(direction, width):
 	"""
@@ -59,8 +57,8 @@ def google_example_data(direction, width):
 	Reference:
 		
 	"""
-	xyz = sh_utility.get_cartesian_map(width)
-	return utility.grey_to_colour(np.clip(np.sum(direction * xyz, axis=2), 0.0, 1.0))
+	xyz = sh_utilities.get_cartesian_map(width)
+	return utilities.grey_to_colour(np.clip(np.sum(direction * xyz, axis=2), 0.0, 1.0))
 
 def gritty_details_example_data(width):
 	"""
@@ -75,10 +73,10 @@ def gritty_details_example_data(width):
 
 	x = np.arange(0,width)
 	y = np.arange(0,width//2).reshape(width//2,1)
-	lat_lon = sh_utility.xy_to_ll(x,y,width,width//2)
+	lat_lon = sh_utilities.xy_to_ll(x,y,width,width//2)
 	theta = np.repeat(lat_lon[0][:, np.newaxis], width, axis=1).reshape((width//2, width))
 	phi = np.repeat(lat_lon[1][np.newaxis, :], width//2, axis=0).reshape((width//2, width))
-	return utility.grey_to_colour(np.maximum(0.0, 5 * np.cos(theta) - 4) +
+	return utilities.grey_to_colour(np.maximum(0.0, 5 * np.cos(theta) - 4) +
 						  np.maximum(0.0, -4 * np.sin(theta - np.pi) * np.cos(phi - 2.5) - 3))
 
 def run_gritty_details_example():
@@ -89,9 +87,9 @@ def run_gritty_details_example():
 	width = 2048
 	radiance_map_data = gritty_details_example_data(width)
 
-	ibl_coeffs = sh_utility.get_coefficients_from_image(radiance_map_data, l_max, resize_width=width)
+	ibl_coeffs = sh_utilities.get_coefficients_from_image(radiance_map_data, l_max, resize_width=width)
 	print("Google's example result:")
-	sh_utility.sh_print(ibl_coeffs)
+	sh_utilities.sh_print(ibl_coeffs)
 
 def run_google_example():
 	"""
@@ -101,9 +99,9 @@ def run_google_example():
 	width = 2048
 	radiance_map_data = google_example_data([0,1,0], width)
 
-	ibl_coeffs = sh_utility.get_coefficients_from_image(radiance_map_data, l_max, resize_width=width)
+	ibl_coeffs = sh_utilities.get_coefficients_from_image(radiance_map_data, l_max, resize_width=width)
 	print("Google's example result:")
-	sh_utility.sh_print(ibl_coeffs)
+	sh_utilities.sh_print(ibl_coeffs)
 
 
 def parse_arguments():
@@ -137,11 +135,11 @@ def main():
 
 	# Visualize the spherical harmonic functions
 	print("Plotting spherical harmonic functions...")
-	sh_utility.sh_visualise(args.l_max, show=False, output_dir=args.output_dir)
+	sh_utilities.sh_visualise(args.l_max, show=False, output_dir=args.output_dir)
 
 	# Read image
 	print("Reading image...")
-	radiance_map_data = utility.resize_image(
+	radiance_map_data = utilities.resize_image(
 		im.imread(args.ibl_filename, plugin='EXR-FI')[:, :, :3],
 		args.resize_width,
 		resize_height,
@@ -149,15 +147,15 @@ def main():
 	)
 
 	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.exr'), radiance_map_data.astype(np.float32))
-	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.jpg'), utility.linear2sRGB(radiance_map_data))
+	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.jpg'), utilities.linear2sRGB(radiance_map_data))
 
 	# SPH projection
 	print("Running spherical harmonics...")
-	#ibl_coeffs = sh_utility.get_coefficients_from_file(args.ibl_filename, args.l_max, resize_width=args.resize_width)
-	ibl_coeffs = sh_utility.get_coefficients_from_image(radiance_map_data, args.l_max, resize_width=args.resize_width)
-	sh_utility.write_reconstruction(ibl_coeffs, args.l_max, '_SPH', width=args.resize_width, output_dir=args.output_dir)
-	#sh_utility.sh_print(ibl_coeffs)
-	sh_utility.sh_print_to_file(ibl_coeffs)
+	#ibl_coeffs = sh_utilities.get_coefficients_from_file(args.ibl_filename, args.l_max, resize_width=args.resize_width)
+	ibl_coeffs = sh_utilities.get_coefficients_from_image(radiance_map_data, args.l_max, resize_width=args.resize_width)
+	sh_utilities.write_reconstruction(ibl_coeffs, args.l_max, '_SPH', width=args.resize_width, output_dir=args.output_dir)
+	#sh_utilities.sh_print(ibl_coeffs)
+	sh_utilities.sh_print_to_file(ibl_coeffs)
 
 	print("Spherical harmonics processing is complete.\n")
 
@@ -165,14 +163,14 @@ def main():
 	print("Generating ground truth diffuse map for comparison...")
 	diffuse_low_res_width = 32  # Trade-off between processing time and ground truth quality
 	output_width = args.resize_width
-	diffuse_ibl_gt = utility.get_roughness_map(
+	diffuse_ibl_gt = utilities.get_roughness_map(
 		args.ibl_filename,
 		width=args.resize_width,
 		width_low_res=diffuse_low_res_width,
 		output_width=output_width
 	)
 	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.exr'), diffuse_ibl_gt.astype(np.float32))
-	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.jpg'), utility.linear2sRGB(diffuse_ibl_gt))
+	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.jpg'), utilities.linear2sRGB(diffuse_ibl_gt))
 
 	print("Complete.")
 
