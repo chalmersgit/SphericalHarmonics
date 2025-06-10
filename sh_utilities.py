@@ -36,7 +36,7 @@ import math
 
 # Custom
 import spherical_harmonics as sh
-import utility
+import custom_utilities
 
 def get_coefficients_matrix(xres,l_max=2):
 	yres = int(xres/2)
@@ -59,11 +59,11 @@ def get_coefficients_from_image(ibl, l_max=2, resize_width=None, filder_amount=N
 	# Resize if necessary (I recommend it for large images)
 	if resize_width is not None:
 		#ibl = cv2.resize(ibl, dsize=(resize_width,int(resize_width/2)), interpolation=cv2.INTER_CUBIC)
-		ibl = utility.resize_image(ibl, resize_width, int(resize_width/2), cv2.INTER_CUBIC)
+		ibl = custom_utilities.resize_image(ibl, resize_width, int(resize_width/2), cv2.INTER_CUBIC)
 	elif ibl.shape[1] > 1000:
 		#print("Input resolution is large, reducing for efficiency")
 		#ibl = cv2.resize(ibl, dsize=(1000,500), interpolation=cv2.INTER_CUBIC)
-		ibl = utility.resize_image(ibl, 1000, 500, cv2.INTER_CUBIC)
+		ibl = custom_utilities.resize_image(ibl, 1000, 500, cv2.INTER_CUBIC)
 	xres = ibl.shape[1]
 	yres = ibl.shape[0]
 
@@ -75,7 +75,7 @@ def get_coefficients_from_image(ibl, l_max=2, resize_width=None, filder_amount=N
 	sh_basis_matrix = get_coefficients_matrix(xres,l_max)
 
 	# Sampling weights
-	solid_angles = utility.get_solid_angle_map(xres)
+	solid_angles = custom_utilities.get_solid_angle_map(xres)
 
 	# Project IBL into SH basis
 	n_coeffs = sh.sh_terms(l_max)
@@ -230,8 +230,8 @@ def write_reconstruction(c, l_max, fn='', width=600, output_dir='./output/'):
 	im.imwrite(output_dir+'_sh_light_l'+str(l_max)+fn+'.exr',reconstructed_signal)
 	im.imwrite(output_dir+'_sh_render_l'+str(l_max)+fn+'.exr',reconstructed_diffuse)
 
-	im.imwrite(output_dir+'_sh_light_l'+str(l_max)+fn+'.jpg',utility.linear2sRGB(reconstructed_signal))
-	im.imwrite(output_dir+'_sh_render_l'+str(l_max)+fn+'.png',utility.linear2sRGB(reconstructed_diffuse))
+	im.imwrite(output_dir+'_sh_light_l'+str(l_max)+fn+'.jpg',custom_utilities.linear2sRGB(reconstructed_signal))
+	im.imwrite(output_dir+'_sh_render_l'+str(l_max)+fn+'.png',custom_utilities.linear2sRGB(reconstructed_diffuse))
 
 # Utility functions for SPH
 def sh_print(coeffs, precision=3):

@@ -40,7 +40,7 @@ import cv2  # For resizing images with float support
 
 # Custom
 import sh_utilities
-import utilities
+import custom_utilities
 
 def google_example_data(direction, width):
 	"""
@@ -58,7 +58,7 @@ def google_example_data(direction, width):
 		
 	"""
 	xyz = sh_utilities.get_cartesian_map(width)
-	return utilities.grey_to_colour(np.clip(np.sum(direction * xyz, axis=2), 0.0, 1.0))
+	return custom_utilities.grey_to_colour(np.clip(np.sum(direction * xyz, axis=2), 0.0, 1.0))
 
 def gritty_details_example_data(width):
 	"""
@@ -76,7 +76,7 @@ def gritty_details_example_data(width):
 	lat_lon = sh_utilities.xy_to_ll(x,y,width,width//2)
 	theta = np.repeat(lat_lon[0][:, np.newaxis], width, axis=1).reshape((width//2, width))
 	phi = np.repeat(lat_lon[1][np.newaxis, :], width//2, axis=0).reshape((width//2, width))
-	return utilities.grey_to_colour(np.maximum(0.0, 5 * np.cos(theta) - 4) +
+	return custom_utilities.grey_to_colour(np.maximum(0.0, 5 * np.cos(theta) - 4) +
 						  np.maximum(0.0, -4 * np.sin(theta - np.pi) * np.cos(phi - 2.5) - 3))
 
 def run_gritty_details_example():
@@ -139,7 +139,7 @@ def main():
 
 	# Read image
 	print("Reading image...")
-	radiance_map_data = utilities.resize_image(
+	radiance_map_data = custom_utilities.resize_image(
 		im.imread(args.ibl_filename, plugin='EXR-FI')[:, :, :3],
 		args.resize_width,
 		resize_height,
@@ -147,7 +147,7 @@ def main():
 	)
 
 	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.exr'), radiance_map_data.astype(np.float32))
-	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.jpg'), utilities.linear2sRGB(radiance_map_data))
+	im.imwrite(os.path.join(args.output_dir, '_radiance_map_data.jpg'), custom_utilities.linear2sRGB(radiance_map_data))
 
 	# SPH projection
 	print("Running spherical harmonics...")
@@ -163,14 +163,14 @@ def main():
 	print("Generating ground truth diffuse map for comparison...")
 	diffuse_low_res_width = 32  # Trade-off between processing time and ground truth quality
 	output_width = args.resize_width
-	diffuse_ibl_gt = utilities.get_roughness_map(
+	diffuse_ibl_gt = custom_utilities.get_roughness_map(
 		args.ibl_filename,
 		width=args.resize_width,
 		width_low_res=diffuse_low_res_width,
 		output_width=output_width
 	)
 	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.exr'), diffuse_ibl_gt.astype(np.float32))
-	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.jpg'), utilities.linear2sRGB(diffuse_ibl_gt))
+	im.imwrite(os.path.join(args.output_dir, f'_diffuse_ibl_gt_{args.resize_width}_{diffuse_low_res_width}_{output_width}.jpg'), custom_utilities.linear2sRGB(diffuse_ibl_gt))
 
 	print("Complete.")
 
