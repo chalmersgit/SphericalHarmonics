@@ -52,10 +52,7 @@ def google_example_data(direction, width):
 		width (int): Width of the image.
 
 	Returns:
-		ndarray: radiance map with pixel values following a cosine lobe
-
-	Reference:
-		
+		ndarray: radiance map with pixel values following a cosine lobe		
 	"""
 	xyz = sh_utilities.get_cartesian_map(width)
 	return custom_utilities.grey_to_colour(np.clip(np.sum(direction * xyz, axis=2), 0.0, 1.0))
